@@ -32,6 +32,11 @@ export class GroupCipher {
 
 		const iteration = senderKeyState.getSenderChainKey().getIteration()
 		const senderKey = this.getSenderKey(senderKeyState, iteration === 0 ? 0 : iteration + 1)
+		// [Zeus patch] sender-key-leak: pedir iteración + 1 deja la clave actual guardada como
+		// "saltada" en NUESTRO sender-key en cada envío (hasta 2000, ~450 KB por grupo, que se
+		// deserializa en cada envío: 12 ms con 50 KB). Nunca desciframos nuestros propios
+		// mensajes de grupo, así que se descartan. Las iteraciones enviadas no cambian.
+		;(senderKeyState as any).senderKeyStateStructure.senderMessageKeys = []
 
 		const ciphertext = await this.getCipherText(senderKey.getIv(), senderKey.getCipherKey(), paddedPlaintext)
 

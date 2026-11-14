@@ -52,6 +52,8 @@ export type BaileysEventMap = {
 	/** update the given chats */
 	'chats.update': ChatUpdate[]
 	'lid-mapping.update': LIDMapping
+	/** [Zeus patch] WhatsApp rotó el LID de un contacto */
+	'lid-change': { oldLid: string; newLid: string }
 	/** delete chats with given ID */
 	'chats.delete': string[]
 	/** presence of contact in a chat updated */

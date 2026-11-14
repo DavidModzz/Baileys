@@ -268,6 +268,19 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 					handleMessageCappingNotification(data)
 					break
 
+				case 'LidChangeNotification': {
+					// [Zeus patch] WhatsApp rotó el LID de un contacto (xwa2_notify_lid_change).
+					// Emitimos un evento propio para migrar claves sin tocar el hot path.
+					const lidPayload = (data as any)?.xwa2_notify_lid_change
+					const oldLid: string | undefined = lidPayload?.old
+					const newLid: string | undefined = lidPayload?.new
+					if (oldLid && newLid && oldLid !== newLid) {
+						ev.emit('lid-change', { oldLid, newLid })
+					}
+
+					break
+				}
+
 				// newsletter ops still use the legacy <mex> child structure
 				case 'NotificationNewsletterUpdate':
 				case 'NotificationLinkedProfilesUpdates':
@@ -1948,12 +1961,24 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 		}
 	}
 
+	// [Zeus patch] WhatsApp envía stanzas <status> a los dispositivos vinculados y espera un ack.
+	// rc14 no las confirmaba y el servidor cortaba el stream ~50 min después con
+	// "Stream Errored (ack)" (código 500). Ver WhiskeySockets/Baileys#2858.
+	const handleStatus = async (node: BinaryNode) => {
+		try {
+			await sendMessageAck(node)
+		} catch (error) {
+			onUnexpectedError(error as Error, 'acking status stanza')
+		}
+	}
+
 	const offlineNodeProcessor = makeOfflineNodeProcessor(
 		new Map<MessageType, (node: BinaryNode) => Promise<void>>([
 			['message', handleMessage],
 			['call', handleCall],
 			['receipt', handleReceipt],
-			['notification', handleNotification]
+			['notification', handleNotification],
+			['status', handleStatus]
 		]),
 		{
 			isWsOpen: () => ws.isOpen,
@@ -2010,6 +2035,10 @@ export const makeMessagesRecvSocket = (config: SocketConfig) => {
 
 	ws.on('CB:notification', async (node: BinaryNode) => {
 		await processNode('notification', node, 'handling notification', handleNotification)
+	})
+	// [Zeus patch] ack de stanzas <status> (Baileys#2858)
+	ws.on('CB:status', async (node: BinaryNode) => {
+		await processNode('status', node, 'acking status stanza', handleStatus)
 	})
 	ws.on('CB:ack,class:message', (node: BinaryNode) => {
 		handleBadAck(node).catch(error => onUnexpectedError(error, 'handling bad ack'))

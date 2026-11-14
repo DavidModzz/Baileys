@@ -759,6 +759,10 @@ export const uploadWithNodeHttp = async (
 		})
 
 		const stream = createReadStream(filePath)
+		// [Zeus patch] pipe() no cierra el origen si la petición falla o se destruye:
+		// el archivo -enc quedaba abierto (ocupando disco aunque se borrara) en cada
+		// subida fallida. Al cerrarse la petición, se cierra también el archivo.
+		req.on('close', () => stream.destroy())
 		stream.pipe(req)
 		stream.on('error', err => {
 			req.destroy()
