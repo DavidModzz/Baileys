@@ -35561,6 +35561,7 @@ export const proto = $root.proto = (() => {
         Message.prototype.pollCreationMessageV5 = null;
         Message.prototype.newsletterFollowerInviteMessageV2 = null;
         Message.prototype.pollResultSnapshotMessageV3 = null;
+        Message.prototype.audioStickerMessage = null;
 
         let $oneOfFields;
 
@@ -36134,6 +36135,12 @@ export const proto = $root.proto = (() => {
             set: $util.oneOfSetter($oneOfFields)
         });
 
+        // Virtual OneOf for proto3 optional field
+        Object.defineProperty(Message.prototype, "_audioStickerMessage", {
+            get: $util.oneOfGetter($oneOfFields = ["audioStickerMessage"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
         Message.create = function create(properties) {
             return new Message(properties);
         };
@@ -36331,6 +36338,8 @@ export const proto = $root.proto = (() => {
                 $root.proto.Message.NewsletterFollowerInviteMessage.encode(m.newsletterFollowerInviteMessageV2, w.uint32(906).fork()).ldelim();
             if (m.pollResultSnapshotMessageV3 != null && Object.hasOwnProperty.call(m, "pollResultSnapshotMessageV3"))
                 $root.proto.Message.PollResultSnapshotMessage.encode(m.pollResultSnapshotMessageV3, w.uint32(914).fork()).ldelim();
+            if (m.audioStickerMessage != null && Object.hasOwnProperty.call(m, "audioStickerMessage"))
+                $root.proto.Message.FutureProofMessage.encode(m.audioStickerMessage, w.uint32(1074).fork()).ldelim();
             return w;
         };
 
@@ -36721,6 +36730,10 @@ export const proto = $root.proto = (() => {
                     }
                 case 114: {
                         m.pollResultSnapshotMessageV3 = $root.proto.Message.PollResultSnapshotMessage.decode(r, r.uint32());
+                        break;
+                    }
+                case 134: {
+                        m.audioStickerMessage = $root.proto.Message.FutureProofMessage.decode(r, r.uint32());
                         break;
                     }
                 default:
@@ -37208,6 +37221,11 @@ export const proto = $root.proto = (() => {
                     throw TypeError(".proto.Message.pollResultSnapshotMessageV3: object expected");
                 m.pollResultSnapshotMessageV3 = $root.proto.Message.PollResultSnapshotMessage.fromObject(d.pollResultSnapshotMessageV3);
             }
+            if (d.audioStickerMessage != null) {
+                if (typeof d.audioStickerMessage !== "object")
+                    throw TypeError(".proto.Message.audioStickerMessage: object expected");
+                m.audioStickerMessage = $root.proto.Message.FutureProofMessage.fromObject(d.audioStickerMessage);
+            }
             return m;
         };
 
@@ -37689,6 +37707,11 @@ export const proto = $root.proto = (() => {
                 d.pollResultSnapshotMessageV3 = $root.proto.Message.PollResultSnapshotMessage.toObject(m.pollResultSnapshotMessageV3, o);
                 if (o.oneofs)
                     d._pollResultSnapshotMessageV3 = "pollResultSnapshotMessageV3";
+            }
+            if (m.audioStickerMessage != null && m.hasOwnProperty("audioStickerMessage")) {
+                d.audioStickerMessage = $root.proto.Message.FutureProofMessage.toObject(m.audioStickerMessage, o);
+                if (o.oneofs)
+                    d._audioStickerMessage = "audioStickerMessage";
             }
             return d;
         };
@@ -62618,6 +62641,7 @@ export const proto = $root.proto = (() => {
             StickerMessage.prototype.isAnimated = null;
             StickerMessage.prototype.pngThumbnail = null;
             StickerMessage.prototype.contextInfo = null;
+            StickerMessage.prototype.audioMessage = null;
             StickerMessage.prototype.stickerSentTs = null;
             StickerMessage.prototype.isAvatar = null;
             StickerMessage.prototype.isAiSticker = null;
@@ -62718,6 +62742,12 @@ export const proto = $root.proto = (() => {
             });
 
             // Virtual OneOf for proto3 optional field
+            Object.defineProperty(StickerMessage.prototype, "_audioMessage", {
+                get: $util.oneOfGetter($oneOfFields = ["audioMessage"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            // Virtual OneOf for proto3 optional field
             Object.defineProperty(StickerMessage.prototype, "_stickerSentTs", {
                 get: $util.oneOfGetter($oneOfFields = ["stickerSentTs"]),
                 set: $util.oneOfSetter($oneOfFields)
@@ -62790,6 +62820,8 @@ export const proto = $root.proto = (() => {
                     w.uint32(130).bytes(m.pngThumbnail);
                 if (m.contextInfo != null && Object.hasOwnProperty.call(m, "contextInfo"))
                     $root.proto.ContextInfo.encode(m.contextInfo, w.uint32(138).fork()).ldelim();
+                if (m.audioMessage != null && Object.hasOwnProperty.call(m, "audioMessage"))
+                    $root.proto.Message.AudioMessage.encode(m.audioMessage, w.uint32(210).fork()).ldelim();
                 if (m.stickerSentTs != null && Object.hasOwnProperty.call(m, "stickerSentTs"))
                     w.uint32(144).int64(m.stickerSentTs);
                 if (m.isAvatar != null && Object.hasOwnProperty.call(m, "isAvatar"))
@@ -62872,6 +62904,10 @@ export const proto = $root.proto = (() => {
                         }
                     case 17: {
                             m.contextInfo = $root.proto.ContextInfo.decode(r, r.uint32());
+                            break;
+                        }
+                    case 26: {
+                            m.audioMessage = $root.proto.Message.AudioMessage.decode(r, r.uint32());
                             break;
                         }
                     case 18: {
@@ -62985,6 +63021,11 @@ export const proto = $root.proto = (() => {
                     if (typeof d.contextInfo !== "object")
                         throw TypeError(".proto.Message.StickerMessage.contextInfo: object expected");
                     m.contextInfo = $root.proto.ContextInfo.fromObject(d.contextInfo);
+                }
+                if (d.audioMessage != null) {
+                    if (typeof d.audioMessage !== "object")
+                        throw TypeError(".proto.Message.StickerMessage.audioMessage: object expected");
+                    m.audioMessage = $root.proto.Message.AudioMessage.fromObject(d.audioMessage);
                 }
                 if (d.stickerSentTs != null) {
                     if ($util.Long)
@@ -63123,6 +63164,11 @@ export const proto = $root.proto = (() => {
                     d.contextInfo = $root.proto.ContextInfo.toObject(m.contextInfo, o);
                     if (o.oneofs)
                         d._contextInfo = "contextInfo";
+                }
+                if (m.audioMessage != null && m.hasOwnProperty("audioMessage")) {
+                    d.audioMessage = $root.proto.Message.AudioMessage.toObject(m.audioMessage, o);
+                    if (o.oneofs)
+                        d._audioMessage = "audioMessage";
                 }
                 if (m.stickerSentTs != null && m.hasOwnProperty("stickerSentTs")) {
                     if (typeof m.stickerSentTs === "number")
