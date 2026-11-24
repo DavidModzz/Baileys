@@ -1179,7 +1179,13 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 		return 'text'
 	}
 
-	const getMediaType = (message: proto.IMessage) => {
+	const getMediaType = (message: proto.IMessage): string => {
+		// [Zeus patch] el sticker con audio va envuelto (también dentro de ephemeral): se clasifica por el sticker interno
+		const audioSticker = message.audioStickerMessage?.message || message.ephemeralMessage?.message?.audioStickerMessage?.message
+		if (audioSticker) {
+			return getMediaType(audioSticker)
+		}
+
 		if (message.imageMessage) {
 			return 'image'
 		} else if (message.videoMessage) {
